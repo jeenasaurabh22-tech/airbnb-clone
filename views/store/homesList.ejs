@@ -24,8 +24,12 @@
                       <span class="text-gray-700"><%= home.rating %></span>
                     </div>
                   </div>
+                  
+              <a href="/homes/<%= home.id %>" class="bg-blue-300 text-white font-bold py-2 px-4 rounded hover:bg-blue-400 transition duration-300">Details</a>
+              <%- include('../partials/favorites',{home:home}) %>
                 </div>
-                <button class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 transition duration-300">book</button>
+                
+               
               </div>
             <% } %>
           <% }) %>

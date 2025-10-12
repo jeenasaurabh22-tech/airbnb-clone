@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const rootDir = require('../utils/pathUtil');
 const filePath = path.join(rootDir, 'data', 'homes.json');
+const favPath = path.join(rootDir, 'data', 'favourites.json');
 
 module.exports = class Home {
     constructor(houseName, price, location, rating, photoUrl) {
@@ -13,6 +14,7 @@ module.exports = class Home {
     }
 
     save(callback) {
+        this.id = Math.random().toString();
         const homes = Home.fetchAllSync();
         homes.push(this);
         try {
@@ -22,6 +24,12 @@ module.exports = class Home {
             console.log('Error writing file:', err);
             if (callback) callback(err);
         }
+    }
+    static fetchById(id, callback) {
+        this.fetchAll(homes => {
+      const homeFound = homes.find(home => home.id === id);
+      callback(homeFound);
+    })
     }
 
     static fetchAllSync() {
