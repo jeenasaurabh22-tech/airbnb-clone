@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <% if(currPage === 'home') { %>
+      <title><%= pageTitle %></title>
+    <% } else if(currPage === 'addHome') { %>
+      <title><%= pageTitle %></title>
+    <% } else if(currPage === 'homeAdded') { %>
+      <% 
+        let hasEmptyFields = false;
+        if(registeredHomes && registeredHomes.length > 0) {
+          const lastHome = registeredHomes[registeredHomes.length - 1];
+          if(lastHome.houseName === "" || lastHome.location === "" || lastHome.price === "" || lastHome.ratings === "" || lastHome.photoUrl === "") {
+            hasEmptyFields = true;
+          }
+        }
+      %>
+      <% if(hasEmptyFields) { %>
+        <title><%= altPageTitle %></title>
+      <% } else { %>
+        <title><%= pageTitle %></title>
+      <% } %>
+      <% } else if(currPage === 'bookings') { %>
+        <title><%= pageTitle %></title>
+        <% } else if(currPage === 'favourites') { %>
+        <title><%= pageTitle %></title>
+      <% } else if(currPage === 'index') { %>
+        <title><%= pageTitle %></title>
+      <% } else { %>
+      <title><%= pageTitle %></title>
+    <% } %>
+    <link rel="stylesheet" href="/output.css" />

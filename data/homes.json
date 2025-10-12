@@ -1,0 +1,51 @@
+[
+  {
+    "houseName": "jain's villa",
+    "price": "600",
+    "location": "saharanpur",
+    "rating": "4",
+    "photoUrl": "hifir"
+  },
+  {
+    "houseName": "buvu",
+    "price": "908",
+    "location": "saharanpur",
+    "rating": "3",
+    "photoUrl": "https://www.google.com/imgres?q=airbnb%20houses&imgurl=https%3A%2F%2Fnews.airbnb.com%2Fwp-content%2Fuploads%2Fsites%2F4%2F2022%2F09%2FAIRBNB-Yuvraj-Singh_Image-01_PDP.jpg&imgrefurl=https%3A%2F%2Fnews.airbnb.com%2Fcricket-icon-yuvraj-singhs-home-in-goa-is-now-on-airbnb%2F&docid=QJhdLpT3T5jH2M&tbnid=pWliPpR0LCJ-AM&vet=12ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA..i&w=4200&h=2800&hcb=2&ved=2ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA"
+  },
+  {
+    "houseName": "jains villa",
+    "price": "90",
+    "location": "raipur",
+    "rating": "3",
+    "photoUrl": "https://www.google.com/imgres?q=airbnb%20houses&imgurl=https%3A%2F%2Fnews.airbnb.com%2Fwp-content%2Fuploads%2Fsites%2F4%2F2022%2F09%2FAIRBNB-Yuvraj-Singh_Image-01_PDP.jpg&imgrefurl=https%3A%2F%2Fnews.airbnb.com%2Fcricket-icon-yuvraj-singhs-home-in-goa-is-now-on-airbnb%2F&docid=QJhdLpT3T5jH2M&tbnid=pWliPpR0LCJ-AM&vet=12ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA..i&w=4200&h=2800&hcb=2&ved=2ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA"
+  },
+  {
+    "houseName": "jains villa",
+    "price": "90",
+    "location": "raipur",
+    "rating": "3",
+    "photoUrl": "https://www.google.com/imgres?q=airbnb%20houses&imgurl=https%3A%2F%2Fnews.airbnb.com%2Fwp-content%2Fuploads%2Fsites%2F4%2F2022%2F09%2FAIRBNB-Yuvraj-Singh_Image-01_PDP.jpg&imgrefurl=https%3A%2F%2Fnews.airbnb.com%2Fcricket-icon-yuvraj-singhs-home-in-goa-is-now-on-airbnb%2F&docid=QJhdLpT3T5jH2M&tbnid=pWliPpR0LCJ-AM&vet=12ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA..i&w=4200&h=2800&hcb=2&ved=2ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA"
+  },
+  {
+    "houseName": "jains villa",
+    "price": "",
+    "location": "",
+    "rating": "",
+    "photoUrl": ""
+  },
+  {
+    "houseName": "jains villa",
+    "price": "906",
+    "location": "saharanpur",
+    "rating": "3",
+    "photoUrl": "https://www.google.com/imgres?q=airbnb%20houses&imgurl=https%3A%2F%2Fnews.airbnb.com%2Fwp-content%2Fuploads%2Fsites%2F4%2F2022%2F09%2FAIRBNB-Yuvraj-Singh_Image-01_PDP.jpg&imgrefurl=https%3A%2F%2Fnews.airbnb.com%2Fcricket-icon-yuvraj-singhs-home-in-goa-is-now-on-airbnb%2F&docid=QJhdLpT3T5jH2M&tbnid=pWliPpR0LCJ-AM&vet=12ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA..i&w=4200&h=2800&hcb=2&ved=2ahUKEwiLve-BspGQAxV0R2wGHbaQOdoQM3oECCMQAA"
+  },
+  {
+    "houseName": "",
+    "price": "",
+    "location": "",
+    "rating": "",
+    "photoUrl": ""
+  }
+]
