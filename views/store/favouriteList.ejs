@@ -4,7 +4,7 @@
     <%- include('../partials/nav') %>
     <main class="container mx-auto bg-white shadow-lg rounded-lg p-8 mt-10 max-w-6xl">
       <h2 class="text-3xl text-red-500 font-bold text-center mb-6">
-        welcome to airbnb index page:
+        welcome to airbnb favourite page:
       </h2>
       <div class="flex flex-wrap justify-center gap-6">
         <% if(favHomes && favHomes.length > 0) { %>
@@ -25,7 +25,9 @@
                     </div>
                   </div>
                 </div>
-                <button class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 transition duration-300">book</button>
+                <form action="/favourites/deleteHome/<%= home.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this home?');">
+                  <button type="submit" class="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-600 transition duration-300">Delete</button>
+                </form>
               </div>
             <% } %>
           <% }) %>

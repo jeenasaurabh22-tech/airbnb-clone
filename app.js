@@ -5,9 +5,12 @@ const hostHandler=require('./routes/hostHandler');
 const rootDir=require('./utils/pathUtil');
 const errorController=require('./controller/error');
 const app=express();
+
 app.use(express.static(path.join(rootDir,"public")));
 app.set('view engine','ejs');
 app.set('views','views');
+
+
 
 app.use(express.urlencoded({extended:true}));
 app.use(storeHandler);

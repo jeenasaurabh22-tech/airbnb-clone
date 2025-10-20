@@ -1,73 +1,61 @@
-const fs = require('fs');
-const path = require('path');
-const rootDir = require('../utils/pathUtil');
-const filePath = path.join(rootDir, 'data', 'homes.json');
-const favPath = path.join(rootDir, 'data', 'favourites.json');
+
+const db=require('../utils/databaseUtil');
+
 
 module.exports = class Home {
-    constructor(houseName, price, location, rating, photoUrl) {
+    constructor(houseName, price, location, rating, photoUrl,description,id) {
         this.houseName = houseName;
         this.price = price;
         this.location = location;
         this.rating = rating;
         this.photoUrl = photoUrl;
+        this.description=description;
+        this.id = id;
     }
 
-    save(callback) {
-        this.id = Math.random().toString();
-        const homes = Home.fetchAllSync();
-        homes.push(this);
-        try {
-            fs.writeFileSync(filePath, JSON.stringify(homes, null, 2));
-            if (callback) callback();
-        } catch (err) {
-            console.log('Error writing file:', err);
-            if (callback) callback(err);
-        }
+    save() {
+      if (
+    !this.houseName ||
+    !this.price ||
+    !this.location ||
+    !this.rating ||
+    !this.photoUrl ||
+    !this.description
+  ) {
+    return Promise.reject('All fields are required. Please fill in all fields.');
+  }
+
+  
+  if (isNaN(this.price) || isNaN(this.rating)) {
+    return Promise.reject('Price and Rating must be valid numbers.');
+  }
+      if(this.id){
+        return db.execute('UPDATE homes SET houseName = ?, price = ?, location = ?, rating = ?, photoUrl = ?, description = ? WHERE id = ?', [
+          this.houseName, this.price, this.location, this.rating, this.photoUrl, this.description, this.id
+      ]);
+      }
+      else{
+        return db.execute('INSERT INTO homes (houseName, price, location, rating, photoUrl, description) VALUES (?, ?, ?, ?, ?, ?)', [
+          this.houseName, this.price, this.location, this.rating, this.photoUrl, this.description
+      ]);
+
+      }
+      
+  }
+    static fetchById(id) {
+      return db.execute('SELECT * FROM homes WHERE id = ?', [id]);
+        
     }
-    static fetchById(id, callback) {
-        this.fetchAll(homes => {
-      const homeFound = homes.find(home => home.id === id);
-      callback(homeFound);
-    })
+    static deleteById(id){
+      return db.execute('DELETE FROM homes WHERE id = ?', [id]);
+        
     }
 
     static fetchAllSync() {
-        try {
-            const data = fs.readFileSync(filePath);
-            if (!data || data.length === 0) {
-                fs.writeFileSync(filePath, '[]');
-                return [];
-            }
-            const homes = JSON.parse(data);
-            return Array.isArray(homes) ? homes : [];
-        } catch (err) {
-            fs.writeFileSync(filePath, '[]');
-            return [];
-        }
+       
     }
 
-    static fetchAll(callback) {
-        if (callback) {
-            // Async version with callback
-            fs.readFile(filePath, (err, data) => {
-                if (err || !data || data.length === 0) {
-                    fs.writeFile(filePath, '[]', (err) => {
-                        callback([]);
-                    });
-                } else {
-                    try {
-                        const homes = JSON.parse(data);
-                        callback(Array.isArray(homes) ? homes : []);
-                    } catch (parseErr) {
-                        console.log('Error parsing JSON:', parseErr);
-                        callback([]);
-                    }
-                }
-            });
-        } else {
-            // Sync version without callback
-            return this.fetchAllSync();
-        }
+    static fetchAll() {
+         return db.execute('SELECT * FROM homes');
     }
 }
