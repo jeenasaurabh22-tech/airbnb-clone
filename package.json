@@ -12,7 +12,7 @@
     "start": "npm run build:css && node app.js"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.14",
+    
     "autoprefixer": "^10.4.21",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
