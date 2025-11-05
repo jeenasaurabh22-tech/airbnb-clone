@@ -1,111 +1,83 @@
-const express=require('express');
-const path=require('path');
-const session=require('express-session');
-const mongostore=require('connect-mongodb-session')(session);
-const storeHandler=require('./routes/storeHandler');
-const hostHandler=require('./routes/hostHandler');
-const authHandler=require('./routes/authHandler');
-const rootDir=require('./utils/pathUtil');
-const errorController=require('./controller/error');
-const app=express();
-const {default:mongoose}=require('mongoose');
-const db="mongodb+srv://root:root123@clustercoding.ieuzb3z.mongodb.net/airbnb?retryWrites=true&w=majority&appName=ClusterCoding";
-const multer=require('multer');
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
+const MongoStore = require('connect-mongodb-session')(session);
+const multer = require('multer');
+const { default: mongoose } = require('mongoose');
 
+const storeHandler = require('./routes/storeHandler');
+const hostHandler = require('./routes/hostHandler');
+const authHandler = require('./routes/authHandler');
+const rootDir = require('./utils/pathUtil');
+const errorController = require('./controller/error');
 
+const app = express();
 
-app.set('view engine','ejs');
-app.set('views','views');
-const store=new mongostore({
-    uri:db,
-    collection:"sessions"
-});
+const db = process.env.MONGO_URI;
+const store = new MongoStore({ uri: db, collection: "sessions" });
 
+// Sessions
 app.use(session({
-    secret:"mysecret",
-    resave:false,
-    saveUninitialized:true,
-    store:store
+  secret: process.env.SESSION_SECRET || "dev_secret",
+  resave: false,
+  saveUninitialized: true,
+  store: store
 }));
+
+// Multer Setup
 const randomstring = (length) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for(let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
 };
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.fieldname === "photo") {
-      cb(null, "uploads");
-    } else if (file.fieldname === "rules") {
-      cb(null, "rules");
-    }
+    if (file.fieldname === "photo") cb(null, "uploads");
+    else if (file.fieldname === "rules") cb(null, "rules");
   },
-
   filename: (req, file, cb) => {
     cb(null, randomstring(10) + '-' + file.originalname);
   }
 });
 
+const fileFilter = (req, file, cb) => {
+  if (['image/jpg', 'image/jpeg', 'image/png', 'application/pdf'].includes(file.mimetype))
+    cb(null, true);
+  else cb(null, false);
+};
 
-const fileFilter=(req,file,cb)=>{
-    if(file.mimetype=='image/jpg'||file.mimetype=='image/jpeg'||file.mimetype=='image/png'||file.mimetype==='application/pdf'){
-        cb(null,true);
-    }
-    else{
-        cb(null,false);
-    }
+app.use(express.urlencoded({ extended: true }));
+app.use(multer({ storage, fileFilter }).fields([{ name: 'photo' }, { name: 'rules' }]));
+app.use(express.static(path.join(rootDir, 'public')));
+app.use("/uploads", express.static(path.join(rootDir, 'uploads')));
 
-}
-
-const multerOptions = { storage, fileFilter };
-
-
-app.use(express.urlencoded({extended:true}));
-app.use(multer(multerOptions).fields([
-  { name: 'photo', maxCount: 1 },
-  { name: 'rules', maxCount: 1 }
-]));
-app.use(express.static(path.join(rootDir, 'public')))
-app.use("/uploads",express.static(path.join(rootDir, 'uploads')));
-app.use("/host/uploads",express.static(path.join(rootDir, 'uploads')));
-app.use("/store/uploads",express.static(path.join(rootDir, 'uploads')));
-app.use("/store/homes/uploads",express.static(path.join(rootDir, 'uploads')));
-app.use((req,res,next)=>{
-    req.isLoggedIn=req.session.isLoggedIn;
-    next();
-})
-
-app.use("/host",(req,res,next)=>{
-    if(!req.isLoggedIn){
-        return res.redirect("/login");
-    }
-    next();
-})
-app.use("/host",hostHandler);
-app.use(authHandler);
-
-app.use("/store",(req,res,next)=>{
-    if(!req.isLoggedIn&&req.originalUrl!=="/store"){
-        return res.redirect("/login");
-    }
-    next();
-})
-app.use("/store",storeHandler);
-
-
-
-app.use(errorController.getError);
-
-mongoose.connect("mongodb+srv://root:root123@clustercoding.ieuzb3z.mongodb.net/airbnb?retryWrites=true&w=majority&appName=ClusterCoding").then(()=>{
-    console.log("connected to mongodb");
-    app.listen(3003,()=>{
-        console.log('server started on port 3003');
-    })
-    
-}).catch((err)=>{
-    console.log("connection failed",err);
+// Session middleware
+app.use((req, res, next) => {
+  req.isLoggedIn = req.session.isLoggedIn;
+  next();
 });
 
+// Auth routes
+app.use("/host", (req, res, next) => {
+  if (!req.isLoggedIn) return res.redirect("/login");
+  next();
+});
+app.use("/host", hostHandler);
+app.use(authHandler);
+app.use("/store", (req, res, next) => {
+  if (!req.isLoggedIn && req.originalUrl !== "/store") return res.redirect("/login");
+  next();
+});
+app.use("/store", storeHandler);
+
+// Error handler
+app.use(errorController.getError);
+
+// DB + Start server
+mongoose.connect(db)
+  .then(() => {
+    console.log("Connected to MongoDB");
+    const PORT = process.env.PORT || 3003;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(err => console.log("Connection failed", err));
