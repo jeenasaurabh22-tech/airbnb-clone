@@ -8,8 +8,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tailwind": "npx @tailwindcss/cli -i ./views/input.css -o ./public/output.css --watch",
-    "start": "nodemon app.js & npm run tailwind"
+   "build:css": "npx tailwindcss -i ./views/input.css -o ./public/output.css",
+  "start": "npm run build:css && node app.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.14",
