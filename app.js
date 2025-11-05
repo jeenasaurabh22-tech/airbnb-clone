@@ -13,12 +13,14 @@ const errorController = require('./controller/error');
 
 const app = express();
 
-const db = process.env.MONGO_URI;
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+const db ="mongodb+srv://root:root123@clustercoding.ieuzb3z.mongodb.net/airbnb?retryWrites=true&w=majority&appName=ClusterCoding" ;
 const store = new MongoStore({ uri: db, collection: "sessions" });
 
 // Sessions
 app.use(session({
-  secret: process.env.SESSION_SECRET || "dev_secret",
+  secret: "dev_secret",
   resave: false,
   saveUninitialized: true,
   store: store
@@ -77,7 +79,7 @@ app.use(errorController.getError);
 mongoose.connect(db)
   .then(() => {
     console.log("Connected to MongoDB");
-    const PORT = process.env.PORT || 3003;
+    const PORT =  3003;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch(err => console.log("Connection failed", err));
