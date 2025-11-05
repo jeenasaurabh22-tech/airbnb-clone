@@ -1,54 +1,89 @@
 const Home = require('../model/home');
-const favHomes=require('../model/favHomes');
+const User=require('../model/User');
 exports.getHomes = (req, res, next) => {
- Home.fetchAll().then(([registeredHomes]) => {
-    res.render('store/homesList', { registeredHomes: registeredHomes, pageTitle: 'All Homes', currPage: 'homes' });
+ Home.find().then(registeredHomes => {
+    res.render('store/homesList', { registeredHomes: registeredHomes, pageTitle: 'Homes list', currPage: 'home', isLoggedIn:req.isLoggedIn,User:req.session.User });
   }).catch(err => console.log(err));
 };
 exports.getIndex = (req, res, next) => {
-  Home.fetchAll().then(([registeredHomes]) => {
-    res.render('store/index', { registeredHomes: registeredHomes, pageTitle: 'Airbnb Home', currPage: 'index' });
+  console.log(req.session);
+ Home.find().then(registeredHomes => {
+    res.render('store/index', { registeredHomes: registeredHomes, pageTitle: 'Airbnb Home', currPage: 'index',isLoggedIn:req.isLoggedIn ,User:req.session.User});
   }).catch(err => console.log(err));
 };
 
 exports.getBookings = (req, res, next) => {
-  res.render('store/bookings', { pageTitle: 'Your Bookings', currPage: 'bookings' });
+  res.render('store/bookings', { pageTitle: 'Your Bookings', currPage: 'bookings',isLoggedIn:req.isLoggedIn,User:req.session.User });
 };
-exports.getFavouriteList = (req, res, next) => {
-  favHomes.getFavourites().then(([favHomes]) => {
-    res.render('store/favouriteList', { favHomes: favHomes, pageTitle: 'Your Favourites', currPage: 'favourites' });
-  }).catch(err => console.log(err));
+exports.getFavouriteList = async (req, res, next) => {
+  // Home.find().then(registeredHomes => {
+  //   favHomes.find().then(favHomesList => {
+  //     const favouriteHomes = registeredHomes.filter(home => {
+  //       return favHomesList.some(favHome => favHome.homeId.toString() === home._id.toString());
+  //     });
+  //     res.render('store/favouriteList', { favouriteHomes: favouriteHomes, pageTitle: 'Your Favourites', currPage: 'favourites' });
+  //   }).catch(err => console.log(err));
+  // });
+  const Userid=req.session.User._id;
+  const user= await User.findById(Userid).populate('favourites');
+   res.render('store/favouriteList', { favHomes: user.favourites, pageTitle: 'Your Favourites', currPage: 'favourites',isLoggedIn:req.isLoggedIn,User:req.session.User });
+ 
+
 };
+
 exports.getHomeDetails=(req, res, next) => {
   const homeId=req.params.homeId;
-  Home.fetchById(homeId).then(([homes]) => {
-    const home=homes[0];
+  Home.findById(homeId).then(home => {
     if (home) {
       console.log('home found');
-      res.render('store/homeDetail', { home: home, pageTitle: 'home-details', currPage: 'home' });
+      res.render('store/homeDetail', { home: home, pageTitle: 'home-details', currPage: 'home' ,isLoggedIn:req.isLoggedIn,User:req.session.User });
     } else {
       console.log('home not found');
-      res.redirect('/homes');
+      res.redirect('/store/homes');
     }
-  });
+  }).catch(err => console.log(err));
 };
-exports.addToFavourites = (req, res, next) => {
+exports.addToFavourites = async (req, res, next) => {
   const homeId = req.body.homeId;
- favHomes.addFavourites(homeId).then((result) => {
-   console.log(result.message);
-   res.redirect('/homes');
- }).catch(err => {
-   console.log('Error adding to favourites:', err);
-   res.redirect('/favourites');
- });
+  const Userid=req.session.User._id;
+  const user=await User.findById(Userid);
+  if(!user.favourites.includes(homeId)){
+      user.favourites.push(homeId);
+      await user.save();
+
+  }
+  res.redirect('/store/favourites');
+
+
+
 };
-exports.removeFromFavourites = (req, res, next) => {
+exports.removeFromFavourites = async (req, res, next) => {
   const homeId = req.params.homeId;
-  favHomes.removeFavourites(homeId).then(() => {
-    res.redirect('/favourites');
-  }).catch(err => {
-    console.log('Error removing from favourites:', err);
-    res.redirect('/favourites');
-  });
+  const Userid=req.session.User._id;
+  const user=await User.findById(Userid);
+  if(user.favourites.includes(homeId)){
+      user.favourites=user.favourites.filter(fav=>
+        fav!=homeId);
+    
+      await user.save();
+
+  }
+   res.redirect('/store/favourites');
+
   
+};
+exports.getHoUserules = async (req, res) => {
+  try {
+    const home = await Home.findById(req.params.homeId);
+
+    if (!home || !home.rules || home.rules.length === 0) {
+      return res.send("No rules uploaded");
+    }
+
+    return res.download(home.rules[home.rules.length - 1]);
+
+  } catch (err) {
+    console.log(err);
+    res.redirect('/store/homes');
+  }
 };

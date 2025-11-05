@@ -5,8 +5,8 @@
     <main class="container mx-auto mt-8 p-8 bg-white rounded-lg shadow-md">
       <h1 class="text-3xl font-bold mb-6 text-center text-gray-800"><%= editing ? 'Edit Your Home on AirBnB' : 'Register Your Home on AirBnB' %></h1>
 
-      <form action="/host/<%= editing ? 'edit-home ' : 'add-home' %>" method="POST" class="max-w-md mx-auto">
-        <input type="hidden" name="homeId" value="<%= editing ? home.id : '' %>">
+      <form action="/host/<%= editing ? 'edit-home ' : 'add-home' %>" enctype="multipart/form-data" method="POST" class="max-w-md mx-auto">
+        <input type="hidden" name="homeId" value="<%= editing ? home._id : '' %>">
         <input
           type="text"
           name="houseName"
@@ -36,16 +36,24 @@
           class="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
         />
         <input
-          type="text"
-          name="photoURL"
-          value="<%= editing ? home.photoUrl : '' %>"
-          placeholder="Enter Photo URL"
+          type="file"
+          name="photo"
+          
+        accept="image/jpg,image/png,image/jpeg"
+          class="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
+        <input
+          type="file"
+          name="rules"
+          
+        accept="application/pdf"
           class="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
         />
         <textarea
           name="description"
           placeholder="Enter Description"
           class="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"><%= editing ? home.description : '' %></textarea>
+         
         
         <input type="submit" value="<%= editing ? 'Update Home' : 'Add Home on airbnb' %>" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-300" />
       </form>
